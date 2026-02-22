@@ -1,0 +1,1 @@
+// Arquivo desativado. Utilize services/ai.ts para todas as chamadas de IA.

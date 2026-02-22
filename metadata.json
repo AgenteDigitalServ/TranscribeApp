@@ -1,0 +1,7 @@
+{
+  "name": "TranscribeApp",
+  "description": "Inteligência Artificial para Transcrição, Atas e Resumos Executivos.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
