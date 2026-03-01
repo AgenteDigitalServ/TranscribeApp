@@ -85,13 +85,34 @@ const App: React.FC = () => {
   };
 
   const startRecording = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Seu navegador não suporta gravação de áudio ou a conexão não é segura (HTTPS).");
+      return;
+    }
+
+    if (typeof MediaRecorder === 'undefined') {
+      alert("Seu navegador não suporta a API de gravação (MediaRecorder).");
+      return;
+    }
+
     try {
       await requestWakeLock();
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
       });
       setActiveStream(stream);
-      const mediaRecorder = new MediaRecorder(stream, { audioBitsPerSecond: 48000 });
+      
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
+        ? 'audio/webm' 
+        : MediaRecorder.isTypeSupported('audio/ogg') 
+          ? 'audio/ogg' 
+          : 'audio/mp4';
+
+      const mediaRecorder = new MediaRecorder(stream, { 
+        mimeType,
+        audioBitsPerSecond: 128000 
+      });
+      
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
       mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
@@ -100,13 +121,18 @@ const App: React.FC = () => {
       setRecordingDuration(0);
       setView(AppView.RECORD);
       timerRef.current = window.setInterval(() => setRecordingDuration(p => p + 1), 1000);
-    } catch (err) { alert("Microfone não disponível."); releaseWakeLock(); }
+    } catch (err: any) { 
+      console.error("Erro ao iniciar gravação:", err);
+      alert(`Erro ao acessar microfone: ${err.message || "Permissão negada"}`); 
+      releaseWakeLock(); 
+    }
   };
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const mimeType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         await processAudio(audioBlob, URL.createObjectURL(audioBlob), recordingDuration);
       };
       cleanupRecording();
@@ -344,9 +370,22 @@ const App: React.FC = () => {
       </div>
 
       <div className="fixed bottom-10 right-8 flex flex-col gap-4 z-50">
-        <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="audio/*" hidden />
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleFileUpload} 
+          accept="audio/*" 
+          className="hidden" 
+          aria-hidden="true"
+        />
         <button 
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => {
+            if (fileInputRef.current) {
+              fileInputRef.current.click();
+            } else {
+              alert("Erro ao carregar seletor de arquivos.");
+            }
+          }}
           className="h-16 w-16 bg-slate-800 rounded-2xl shadow-xl flex items-center justify-center text-slate-300 active:scale-90 border border-slate-700 transition-all"
         >
           <Upload className="w-7 h-7" />

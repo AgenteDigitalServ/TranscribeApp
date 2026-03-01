@@ -12,8 +12,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
-    "unusedLocals": false,
-    "unusedParameters": false,
+    "types": ["vite/client"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["./**/*.ts", "./**/*.tsx"]

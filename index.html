@@ -11,43 +11,11 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3659/3659755.png" />
     <link rel="manifest" href="manifest.json" />
     <title>TranscribeApp</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        overscroll-behavior-y: none;
-        -webkit-tap-highlight-color: transparent;
-        user-select: none;
-      }
-      input, textarea {
-        user-select: text;
-      }
-      /* Remove safe area gaps on mobile */
-      .safe-top { padding-top: env(safe-area-inset-top); }
-      .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-      
-      /* Ocultar scrollbars para manter visual de App nativo */
-      .scrollbar-hide::-webkit-scrollbar { display: none; }
-      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://aistudiocdn.com/vite@^7.2.7"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-slate-950 text-white h-screen w-screen overflow-hidden">
     <div id="root" class="h-full w-full"></div>
-    <script type="module" src="index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -57,6 +25,5 @@
         });
       }
     </script>
-  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

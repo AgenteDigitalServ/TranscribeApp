@@ -17,8 +17,15 @@ const blobToBase64 = (blob: Blob): Promise<string> => {
 
 export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
   try {
-    // A API_KEY é injetada automaticamente pelo ambiente no process.env.API_KEY
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // Recupera a chave injetada pelo Vite
+    const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+
+    if (!apiKey || apiKey === "" || apiKey === "undefined") {
+      console.error("ERRO: Chave de API não encontrada no ambiente.");
+      throw new Error("API Key não configurada. No Vercel, adicione GEMINI_API_KEY nas Environment Variables e faça um novo Deploy.");
+    }
+    
+    const ai = new GoogleGenAI({ apiKey });
     const base64Data = await blobToBase64(audioBlob);
     
     const response = await ai.models.generateContent({
@@ -47,7 +54,13 @@ export const transcribeAudio = async (audioBlob: Blob): Promise<string> => {
 
 export const summarizeText = async (text: string, format: SummaryFormat): Promise<string> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+
+    if (!apiKey || apiKey === "" || apiKey === "undefined") {
+      throw new Error("API Key não configurada. No Vercel, adicione GEMINI_API_KEY nas Environment Variables e faça um novo Deploy.");
+    }
+    
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = format === SummaryFormat.MEETING_MINUTES 
       ? `Atue como um redator de atas profissional. Transforme a seguinte transcrição em uma ATA DE REUNIÃO FORMAL em Português do Brasil.
